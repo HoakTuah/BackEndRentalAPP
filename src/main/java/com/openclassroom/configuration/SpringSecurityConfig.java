@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
@@ -27,18 +29,33 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
+	@Bean
+	MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+		return new MvcRequestMatcher.Builder(introspector);
+	}
+
+	// mettre la clé dans le fichier application.properties ou dans les variables
+	// d'environnement
 	private String jwtKey = "9mACz7t4PFV5qY3zGx2kJw8nLdXeUhRjWv6bNKcMsH";
 
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		return http.csrf(csrf -> csrf.disable())
+	public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+		return http
+				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-				.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-				.httpBasic(Customizer.withDefaults()).build();
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(mvc.pattern("/api/auth/email")).permitAll()
+						.requestMatchers(mvc.pattern("/api/auth/register")).permitAll()
+						.requestMatchers(mvc.pattern("/api/rentals/**")).authenticated()
+						.requestMatchers(mvc.pattern("/h2-console/**")).permitAll()
+						.requestMatchers(mvc.pattern("/swagger-ui/**")).permitAll()
+						.requestMatchers(mvc.pattern("/v3/api-docs/**")).permitAll()
+						.anyRequest().authenticated())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+				.build();
 	}
 
 	@Bean

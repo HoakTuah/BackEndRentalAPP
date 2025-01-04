@@ -1,6 +1,8 @@
-DROP TABLE IF EXISTS dbuser;
+-- CREATE DATABASE IF NOT EXISTS rentaluser;
 
-CREATE TABLE `USERS` (
+-- USE rentaluser;
+
+CREATE TABLE if NOT EXISTS `USERS` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `email` varchar(255),
   `name` varchar(255),
@@ -10,7 +12,7 @@ CREATE TABLE `USERS` (
 );
 
 
-CREATE TABLE `RENTALS` (
+CREATE TABLE if NOT EXISTS `RENTALS` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `surface` numeric,
@@ -22,7 +24,7 @@ CREATE TABLE `RENTALS` (
   `updated_at` timestamp
 );
 
-CREATE TABLE `MESSAGES` (
+CREATE TABLE if NOT EXISTS `MESSAGES` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `rental_id` integer,
   `user_id` integer,
@@ -38,10 +40,3 @@ ALTER TABLE `RENTALS` ADD FOREIGN KEY (`owner_id`) REFERENCES `USERS` (`id`);
 ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`user_id`) REFERENCES `USERS` (`id`);
 
 ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`rental_id`) REFERENCES `RENTALS` (`id`);
-
-
-
-INSERT INTO USERS (email, name, password, created_at, updated_at) VALUES
-('user1@example.com', 'User1', '$2a$10$/kWnHEHv5G8IQku2pelWQu.Fiu8B5az6qJu3SRhwVlcZsHa5ImOUG', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('user2@example.com', 'User2', '$2a$10$/kWnHEHv5G8IQku2pelWQu.Fiu8B5az6qJu3SRhwVlcZsHa5ImOUG', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-

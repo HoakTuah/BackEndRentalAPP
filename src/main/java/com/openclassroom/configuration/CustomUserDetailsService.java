@@ -8,18 +8,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.openclassroom.model.DBUser;
-import com.openclassroom.repository.DBUserRepository;
+import com.openclassroom.Entity.DBUser;
+import com.openclassroom.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
-	private DBUserRepository dbUserRepository;
+	private UserRepository dbUserRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		DBUser user = dbUserRepository.findByEmail(email);
+	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+		DBUser user = dbUserRepository.findByEmail(login);
 
-		return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+		return new User(user.getUserMail(), user.getPassword(), new ArrayList<>());
 	}
 }

@@ -1,4 +1,6 @@
-package com.openclassroom.model;
+package com.openclassroom.Entity;
+
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,19 +35,6 @@ public class DBUser {
 	private java.time.LocalDateTime updated_at;
 
 	// ---------------------------------------------------------------------
-	// Constructor
-	// ---------------------------------------------------------------------
-
-	public DBUser() {
-	}
-
-	public DBUser(String name, String email, String password) {
-		this.name = name;
-		this.email = email;
-		this.password = password;
-	}
-
-	// ---------------------------------------------------------------------
 	// Getters
 	// ---------------------------------------------------------------------
 
@@ -57,11 +46,19 @@ public class DBUser {
 		this.id = id;
 	}
 
-	public String getUsername() {
+	public String getUserName() {
+		return name;
+	}
+
+	public void setUserName(String name) {
+		this.name = name;
+	}
+
+	public String getUserMail() {
 		return email;
 	}
 
-	public void setUsername(String email) {
+	public void setUserMail(String email) {
 		this.email = email;
 	}
 
@@ -73,4 +70,19 @@ public class DBUser {
 		this.password = password;
 	}
 
+	public LocalDateTime getCreatedAt() {
+		return created_at;
+	}
+
+	public void setCreatedAt(LocalDateTime created_at) {
+		this.created_at = created_at;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updated_at;
+	}
+
+	public void setUpdatedAt(LocalDateTime updated_at) {
+		this.updated_at = updated_at;
+	}
 }
