@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JWTService {
 
-    private JwtEncoder jwtEncoder;
+    private final JwtEncoder jwtEncoder;
 
     public JWTService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
@@ -23,7 +23,10 @@ public class JWTService {
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
 
-        // Get info from Usermail
+        // ----------------------------------------------------------------------------------------
+        // Get info from Usermail and create a JWT token
+        // ----------------------------------------------------------------------------------------
+
         String email = authentication.getName();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-public class RentalRequest {
+public class RentalRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
 

@@ -1,24 +1,27 @@
 package com.openclassroom.DTO;
 
-public class LoginRequest {
-    private String login;
+public class LoginRequestDTO {
+    private String email;
     private String password;
 
-    // Constructeurs
-    public LoginRequest() {
-    }
+    // ----------------------------------------------------------------------------------------
+    // Getters => Return the value of the property
+    // ----------------------------------------------------------------------------------------
 
-    // Getters et Setters
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
+    public String getemail() {
+        return email;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // Setters => Set the value of the property
+    // ----------------------------------------------------------------------------------------
+
+    public void setLogin(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {

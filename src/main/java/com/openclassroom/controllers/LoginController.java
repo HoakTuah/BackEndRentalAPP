@@ -1,22 +1,32 @@
 package com.openclassroom.controllers;
 
+import com.openclassroom.exceptions.AuthenticationFailedException;
+
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
-import com.openclassroom.DTO.LoginRequest;
-import com.openclassroom.DTO.RegisterRequest;
+import com.openclassroom.DTO.LoginRequestDTO;
+import com.openclassroom.DTO.RegisterRequestDTO;
+import com.openclassroom.DTO.UserDTO;
 import com.openclassroom.Entity.DBUser;
+import com.openclassroom.repository.UserRepository;
 import com.openclassroom.services.JWTService;
 import com.openclassroom.services.UserService;
 
@@ -26,6 +36,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Authentication", description = "Login and Registration endpoints")
 public class LoginController {
 
@@ -42,44 +53,70 @@ public class LoginController {
 
 	}
 
-	@PostMapping("/email")
+	@PostMapping("/login")
 	@Operation(summary = "Login with credentials")
-	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(
-							loginRequest.getLogin(),
+							loginRequest.getemail(),
 							loginRequest.getPassword()));
 			String token = jwtService.generateToken(authentication);
 
-			return ResponseEntity.ok(Map.of("token : ", token));
+			Map<String, Object> response = new LinkedHashMap<>();
+			response.put("message", "Login successful");
+			response.put("token", token);
+
+			return ResponseEntity.ok(response);
 
 		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("Invalid email or password");
+			throw new AuthenticationFailedException("Invalid email or password");
 		}
 	}
 
 	@PostMapping("/register")
 	@Operation(summary = "Register a new user")
-	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-		System.out.println("Received request at /api/auth/register");
-		try {
-			DBUser user = userService.registerUser(request);
+	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
+		DBUser user = userService.registerUser(request);
 
-			// Créer un objet Authentication
-			Authentication authentication = new UsernamePasswordAuthenticationToken(
-					user.getUserMail(),
-					null,
-					Collections.emptyList());
+		// Create Authentication object
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+				user.getUserMail(),
+				null,
+				Collections.emptyList());
 
-			// Générer le token
-			String token = jwtService.generateToken(authentication);
+		// Generate token
+		String token = jwtService.generateToken(authentication);
 
-			return ResponseEntity.ok(Map.of("token : ", token));
-
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		// Use LinkedHashMap to maintain order
+		Map<String, Object> response = new LinkedHashMap<>();
+		response.put("message", "Registration successful");
+		response.put("token", token);
+		return ResponseEntity.ok(response);
 	}
+
+	@Autowired
+	private UserRepository dBUserRepository;
+
+	@GetMapping("/me")
+	public ResponseEntity<?> testMe() {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
+		String email = jwtAuth.getToken().getClaim("email");
+
+		DBUser user = dBUserRepository.findByEmail(email);
+
+		UserDTO userDTO = new UserDTO(
+				user.getId(),
+				user.getUserMail(),
+				user.getUserName(),
+				user.getCreatedAt(),
+				user.getUpdatedAt());
+
+		return ResponseEntity.ok(userDTO);
+
+	}
+
 }

@@ -10,8 +10,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 public class DBUser {
+
+	// ----------------------------------------------------------------------------------------
+	// Maps columns names and properties of my users tables of my database
+	// rentaluser
+	// ----------------------------------------------------------------------------------------
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +24,7 @@ public class DBUser {
 	@Column(name = "id")
 	private int id;
 
-	@Column(name = "email")
+	@Column(name = "email", unique = true)
 	private String email;
 
 	@Column(name = "name")
@@ -35,51 +40,55 @@ public class DBUser {
 	private java.time.LocalDateTime updated_at;
 
 	// ---------------------------------------------------------------------
-	// Getters
+	// Getters => Return the value of the property
 	// ---------------------------------------------------------------------
 
 	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getUserName() {
 		return name;
-	}
-
-	public void setUserName(String name) {
-		this.name = name;
 	}
 
 	public String getUserMail() {
 		return email;
 	}
 
-	public void setUserMail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public LocalDateTime getCreatedAt() {
 		return created_at;
 	}
 
-	public void setCreatedAt(LocalDateTime created_at) {
-		this.created_at = created_at;
-	}
-
 	public LocalDateTime getUpdatedAt() {
 		return updated_at;
+	}
+
+	// ---------------------------------------------------------------------
+	// Setters => Set the value of the property
+	// ---------------------------------------------------------------------
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setUserName(String name) {
+		this.name = name;
+	}
+
+	public void setUserMail(String email) {
+		this.email = email;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setCreatedAt(LocalDateTime created_at) {
+		this.created_at = created_at;
 	}
 
 	public void setUpdatedAt(LocalDateTime updated_at) {
