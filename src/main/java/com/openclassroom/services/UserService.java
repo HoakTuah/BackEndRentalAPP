@@ -40,9 +40,9 @@ public class UserService {
         // ----------------------------------------------------------------------------------------
 
         DBUser user = new DBUser();
-        user.setUserMail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setUserName(request.getName());
+        user.setUserMail(request.getEmail().trim());
+        user.setPassword(passwordEncoder.encode(request.getPassword().trim()));
+        user.setUserName(request.getName().trim());
 
         LocalDateTime now = LocalDateTime.now();
         user.setCreatedAt(now);
@@ -50,4 +50,5 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
 }

@@ -19,6 +19,7 @@ public class RentalRequestDTO {
 
     private String picture;
 
+    @NotBlank(message = "Description is required")
     private String description;
 
     // Getters et Setters

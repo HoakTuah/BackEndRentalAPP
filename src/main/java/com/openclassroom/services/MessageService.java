@@ -19,54 +19,56 @@ import java.util.List;
 @Service
 public class MessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
+        @Autowired
+        private MessageRepository messageRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @Autowired
-    private RentalRepository rentalRepository;
+        @Autowired
+        private RentalRepository rentalRepository;
 
-    public List<MessageDTO> getAllMessages() {
-        List<DBMessage> messages = messageRepository.findAll();
+        public List<MessageDTO> getAllMessages() {
+                List<DBMessage> messages = messageRepository.findAll();
 
-        return messages.stream()
-                .map(message -> new MessageDTO(
-                        message.getMessage(),
-                        message.getUser().getId(),
-                        message.getRental().getId(),
-                        message.getCreatedAt(),
-                        message.getUpdatedAt()))
-                .collect(Collectors.toList());
-    }
+                return messages.stream()
+                                .map(message -> new MessageDTO(
+                                                message.getMessage(),
+                                                message.getUser().getId(),
+                                                message.getRental().getId(),
+                                                message.getCreatedAt(),
+                                                message.getUpdatedAt()))
+                                .collect(Collectors.toList());
+        }
 
-    public MessageDTO createMessage(MessageDTO messageDTO) {
-        // Find the related entities
-        DBUser user = userRepository.findById(messageDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + messageDTO.getUserId()));
+        public MessageDTO createMessage(MessageDTO messageDTO) {
+                // Find the related entities
+                DBUser user = userRepository.findById(messageDTO.getUserId())
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found with id: " + messageDTO.getUserId()));
 
-        // Find the rental
-        DBRental rental = rentalRepository.findById(messageDTO.getRentalId())
-                .orElseThrow(
-                        () -> new RentalNotFoundException("Rental not found with id: " + messageDTO.getRentalId()));
+                // Find the rental
+                DBRental rental = rentalRepository.findById(messageDTO.getRentalId())
+                                .orElseThrow(
+                                                () -> new RentalNotFoundException("Rental not found with id: "
+                                                                + messageDTO.getRentalId()));
 
-        DBMessage message = new DBMessage();
-        message.setMessage(messageDTO.getMessage());
-        message.setUser(user);
-        message.setRental(rental);
-        message.setCreatedAt(LocalDateTime.now());
-        message.setUpdatedAt(LocalDateTime.now());
+                DBMessage message = new DBMessage();
+                message.setMessage(messageDTO.getMessage());
+                message.setUser(user);
+                message.setRental(rental);
+                message.setCreatedAt(LocalDateTime.now());
+                message.setUpdatedAt(LocalDateTime.now());
 
-        DBMessage savedMessage = messageRepository.save(message);
+                DBMessage savedMessage = messageRepository.save(message);
 
-        // Convert back to DTO
-        return new MessageDTO(
-                savedMessage.getMessage(),
-                savedMessage.getUser().getId(),
-                savedMessage.getRental().getId(),
-                savedMessage.getCreatedAt(),
-                savedMessage.getUpdatedAt());
+                // Convert back to DTO
+                return new MessageDTO(
+                                savedMessage.getMessage(),
+                                savedMessage.getUser().getId(),
+                                savedMessage.getRental().getId(),
+                                savedMessage.getCreatedAt(),
+                                savedMessage.getUpdatedAt());
 
-    }
+        }
 }

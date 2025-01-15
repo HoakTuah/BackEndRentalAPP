@@ -1,20 +1,23 @@
 package com.openclassroom.DTO;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotEmpty;
 
 public class RegisterRequestDTO {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @NotEmpty(message = "Email cannot be empty")
     private String email;
 
-    @NotBlank(message = "Name is required")
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password should be at least 6 characters")
+    @NotEmpty(message = "Password cannot be empty")
     private String password;
+
+    // ----------------------------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------------------------
+
+    public RegisterRequestDTO() {
+    }
 
     // ----------------------------------------------------------------------------------------
     // Getters => Return the value of the property
@@ -37,15 +40,15 @@ public class RegisterRequestDTO {
     // ----------------------------------------------------------------------------------------
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email != null ? email.trim() : null;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name != null ? name.trim() : null;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password != null ? password.trim() : null;
     }
 
 }

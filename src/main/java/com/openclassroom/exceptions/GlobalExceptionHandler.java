@@ -2,8 +2,10 @@ package com.openclassroom.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -82,4 +84,25 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    // ----------------------------------------------------------------------------------------
+    // Handle MethodArgumentNotValidException for validation errors
+    // ----------------------------------------------------------------------------------------
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
+        Map<String, Object> errors = new LinkedHashMap<>();
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        // response.put("status", HttpStatus.BAD_REQUEST.value());
+        // response.put("message", "Validation error");
+        response.put("errors", errors);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

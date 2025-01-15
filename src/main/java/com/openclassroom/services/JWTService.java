@@ -32,7 +32,7 @@ public class JWTService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.DAYS))
+                .expiresAt(now.plus(1, ChronoUnit.DAYS)) // créer la variable pour la durée de l'expiration dans le fichier application.properties
                 .claim("email", email)
                 .build();
 
