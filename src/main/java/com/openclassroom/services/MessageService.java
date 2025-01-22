@@ -8,9 +8,10 @@ import com.openclassroom.Entity.DBRental;
 import com.openclassroom.repository.MessageRepository;
 import com.openclassroom.repository.UserRepository;
 import com.openclassroom.repository.RentalRepository;
+import com.openclassroom.exceptions.UserNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.openclassroom.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -18,6 +19,10 @@ import java.util.List;
 
 @Service
 public class MessageService {
+
+        // ----------------------------------------------------------------------------------------
+        // Dependencies
+        // ----------------------------------------------------------------------------------------
 
         @Autowired
         private MessageRepository messageRepository;
@@ -28,9 +33,16 @@ public class MessageService {
         @Autowired
         private RentalRepository rentalRepository;
 
+        // ----------------------------------------------------------------------------------------
+        // Retrieves all messages in the system and converts them to DTOs
+        // ----------------------------------------------------------------------------------------
+
         public List<MessageDTO> getAllMessages() {
+
+                // Fetch all messages from the database
                 List<DBMessage> messages = messageRepository.findAll();
 
+                // Convert each message entity to DTO and collect into a list
                 return messages.stream()
                                 .map(message -> new MessageDTO(
                                                 message.getMessage(),
@@ -41,18 +53,24 @@ public class MessageService {
                                 .collect(Collectors.toList());
         }
 
-        public MessageDTO createMessage(MessageDTO messageDTO) {
-                // Find the related entities
-                DBUser user = userRepository.findById(messageDTO.getUserId())
-                                .orElseThrow(() -> new UserNotFoundException(
-                                                "User not found with id: " + messageDTO.getUserId()));
+        // ----------------------------------------------------------------------------------------
+        // Creates a new message in the system
+        // ----------------------------------------------------------------------------------------
 
-                // Find the rental
-                DBRental rental = rentalRepository.findById(messageDTO.getRentalId())
+        public MessageDTO createMessage(MessageDTO messageDTO) {
+
+                // Find the user who is sending the message
+                DBUser user = userRepository.findById(messageDTO.getUser_id())
+                                .orElseThrow(() -> new UserNotFoundException(
+                                                "User not found with id: " + messageDTO.getUser_id()));
+
+                // Find the rental the message is about
+                DBRental rental = rentalRepository.findById(messageDTO.getRental_id())
                                 .orElseThrow(
                                                 () -> new RentalNotFoundException("Rental not found with id: "
-                                                                + messageDTO.getRentalId()));
+                                                                + messageDTO.getRental_id()));
 
+                // Message Creation
                 DBMessage message = new DBMessage();
                 message.setMessage(messageDTO.getMessage());
                 message.setUser(user);
@@ -62,7 +80,7 @@ public class MessageService {
 
                 DBMessage savedMessage = messageRepository.save(message);
 
-                // Convert back to DTO
+                // DTO Conversion
                 return new MessageDTO(
                                 savedMessage.getMessage(),
                                 savedMessage.getUser().getId(),

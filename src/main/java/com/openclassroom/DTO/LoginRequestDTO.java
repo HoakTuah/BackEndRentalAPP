@@ -1,30 +1,12 @@
 package com.openclassroom.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
+
+@Data
 public class LoginRequestDTO {
-    private String email;
-    private String password;
-
-    // ----------------------------------------------------------------------------------------
-    // Getters => Return the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public String getemail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    // ----------------------------------------------------------------------------------------
-    // Setters => Set the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public void setLogin(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    @JsonProperty("login")
+    private String email; // This will generate getEmail() and setEmail()
+    private String password; // This will generate getPassword() and setPassword()
 }

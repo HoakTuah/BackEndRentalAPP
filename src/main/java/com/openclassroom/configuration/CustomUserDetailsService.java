@@ -11,13 +11,23 @@ import org.springframework.stereotype.Service;
 import com.openclassroom.Entity.DBUser;
 import com.openclassroom.repository.UserRepository;
 
+// ----------------------------------------------------------------------------------------
+// Service for loading user details by username
+// ----------------------------------------------------------------------------------------
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
+	// ----------------------------------------------------------------------------------------
+	// Dependencies
+	// ----------------------------------------------------------------------------------------
+
 	@Autowired
 	private UserRepository dbUserRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+		// Find user in database by email
 		DBUser user = dbUserRepository.findByEmail(login);
 
 		return new User(user.getUserMail(), user.getPassword(), new ArrayList<>());

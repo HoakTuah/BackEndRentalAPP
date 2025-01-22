@@ -98,8 +98,6 @@ public class GlobalExceptionHandler {
         }
 
         Map<String, Object> response = new LinkedHashMap<>();
-        // response.put("status", HttpStatus.BAD_REQUEST.value());
-        // response.put("message", "Validation error");
         response.put("errors", errors);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

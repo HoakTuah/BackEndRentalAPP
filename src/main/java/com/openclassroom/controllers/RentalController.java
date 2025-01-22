@@ -1,13 +1,10 @@
 package com.openclassroom.controllers;
 
-import java.util.stream.Collectors;
-
-import com.openclassroom.exceptions.RentalNotFoundException;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.openclassroom.services.RentalService;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,22 +14,33 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import com.openclassroom.services.RentalService;
+import com.openclassroom.exceptions.RentalNotFoundException;
 import com.openclassroom.DTO.RentalDTO;
 import com.openclassroom.DTO.RentalRequestDTO;
-
-import java.util.HashMap;
-import java.util.List;
 import com.openclassroom.Entity.DBRental;
 import com.openclassroom.repository.RentalRepository;
 
-import jakarta.validation.Valid;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import jakarta.validation.Valid;
+
+// ----------------------------------------------------------------------------------------
+// REST Controller for managing rental operations
+// Provides endpoints for CRUD operations on rentals
+// ----------------------------------------------------------------------------------------
 
 @RestController
 @RequestMapping("/api/rentals")
 @Validated
 @Tag(name = "Rentals", description = "API pour la gestion des locations")
 public class RentalController {
+
+        // ----------------------------------------------------------------------------------------
+        // Dependencies
+        // ----------------------------------------------------------------------------------------
 
         private final RentalService rentalService;
         private final RentalRepository rentalRepository;
@@ -42,7 +50,11 @@ public class RentalController {
                 this.rentalRepository = rentalRepository;
         }
 
-        @PostMapping(consumes = "multipart/form-data")
+        // ----------------------------------------------------------------------------------------
+        // Create Rental Endpoint
+        // ----------------------------------------------------------------------------------------
+
+        @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         @Operation(summary = "Créer une nouvelle location", description = "Permet de créer une nouvelle annonce de location", security = {
                         @SecurityRequirement(name = "Bearer Authentication") })
         @ApiResponses(value = {
@@ -68,14 +80,31 @@ public class RentalController {
                                         """)))
 
         })
-        public ResponseEntity<Map<String, String>> createRental(@Valid @RequestBody RentalRequestDTO request) {
-                rentalService.createRental(request);
-                // MultiPartFile a implementer
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Rental created !");
+        public ResponseEntity<Map<String, String>> createRental(
+                        @ModelAttribute @Valid RentalRequestDTO request) { // Changed to @ModelAttribute
 
-                return ResponseEntity.ok(response);
+                try {
+                        DBRental rental = rentalService.createRental(request); // Removed image parameter
+
+                        Map<String, String> response = new HashMap<>();
+                        response.put("message", "Rental created !");
+                        if (rental.getPicture() != null) {
+                                response.put("imageUrl", rental.getPicture());
+                        }
+
+                        return ResponseEntity.ok(response);
+
+                } catch (Exception e) {
+                        Map<String, String> errorResponse = new HashMap<>();
+                        errorResponse.put("error", "Failed to create rental: " + e.getMessage());
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body(errorResponse);
+                }
         }
+
+        // ----------------------------------------------------------------------------------------
+        // Get All Rentals Endpoint
+        // ----------------------------------------------------------------------------------------
 
         @GetMapping
         @Operation(summary = "Récupère toutes les locations", description = "Permet d'obtenir la liste de toutes les locations disponibles", security = {
@@ -133,6 +162,10 @@ public class RentalController {
                 return ResponseEntity.ok(rentalDTOs);
         }
 
+        // ----------------------------------------------------------------------------------------
+        // Get Single Rental Endpoint based on ID
+        // ----------------------------------------------------------------------------------------
+
         @GetMapping("/{id}")
         @Operation(summary = "Récupérer une location par son ID", description = "Permet d'obtenir les détails d'une location spécifique", security = {
                         @SecurityRequirement(name = "Bearer Authentication") })
@@ -183,6 +216,10 @@ public class RentalController {
                 return ResponseEntity.ok(rentalDTO);
         }
 
+        // ----------------------------------------------------------------------------------------
+        // Update Rental Endpoint
+        // ----------------------------------------------------------------------------------------
+
         @PutMapping("/{id}")
         @Operation(summary = "Mettre à jour une location", description = "Permet de modifier les informations d'une location existante", security = {
                         @SecurityRequirement(name = "Bearer Authentication") })
@@ -223,8 +260,10 @@ public class RentalController {
                                         }
                                         """)))
         })
-        public ResponseEntity<Map<String, String>> updateRental(@PathVariable Integer id,
-                        @Valid @RequestBody RentalRequestDTO request) {
+        public ResponseEntity<Map<String, String>> updateRental(
+                        @PathVariable Integer id,
+                        @ModelAttribute @Valid RentalRequestDTO request) { // Changed to @ModelAttribute
+
                 rentalService.updateRental(id, request);
 
                 Map<String, String> response = new HashMap<>();

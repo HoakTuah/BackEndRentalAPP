@@ -1,7 +1,11 @@
 package com.openclassroom.DTO;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class RegisterRequestDTO {
     @NotEmpty(message = "Email cannot be empty")
     private String email;
@@ -11,44 +15,4 @@ public class RegisterRequestDTO {
 
     @NotEmpty(message = "Password cannot be empty")
     private String password;
-
-    // ----------------------------------------------------------------------------------------
-    // Constructors
-    // ----------------------------------------------------------------------------------------
-
-    public RegisterRequestDTO() {
-    }
-
-    // ----------------------------------------------------------------------------------------
-    // Getters => Return the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    // ----------------------------------------------------------------------------------------
-    // Setters => Set the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public void setEmail(String email) {
-        this.email = email != null ? email.trim() : null;
-    }
-
-    public void setName(String name) {
-        this.name = name != null ? name.trim() : null;
-    }
-
-    public void setPassword(String password) {
-        this.password = password != null ? password.trim() : null;
-    }
-
 }

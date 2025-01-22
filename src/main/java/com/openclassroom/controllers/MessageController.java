@@ -10,17 +10,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-// import java.util.List;
+import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
+// ----------------------------------------------------------------------------------------
+// REST Controller for managing message operations
+// Provides endpoints for creating messages
+// ----------------------------------------------------------------------------------------
 
 @RestController
 @RequestMapping("/api/messages")
@@ -28,10 +31,18 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Messages", description = "API de gestion des messages")
 public class MessageController {
 
+    // ----------------------------------------------------------------------------------------
+    // Dependencies
+    // ----------------------------------------------------------------------------------------
+
     @Autowired
     private MessageService messageService;
 
-    @PostMapping
+    // ----------------------------------------------------------------------------------------
+    // Create Message Endpoint
+    // ----------------------------------------------------------------------------------------
+
+    @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "Envoyer un message", description = "Permet d'envoyer un nouveau message pour une location", security = {
             @SecurityRequirement(name = "Bearer Authentication") })
     @ApiResponses(value = {

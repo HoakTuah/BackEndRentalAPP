@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import com.openclassroom.DTO.LoginRequestDTO;
@@ -40,12 +39,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
+// ----------------------------------------------------------------------------------------
+// REST Controller for managing authentication operations
+// Provides endpoints for user registration and login
+// ----------------------------------------------------------------------------------------
+
 @RestController
 @RequestMapping("/api/auth")
 @Validated
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Authentication", description = "API d'authentification pour la gestion des utilisateurs")
 public class LoginController {
+
+	// ----------------------------------------------------------------------------------------
+	// Dependencies
+	// ----------------------------------------------------------------------------------------
 
 	private final JWTService jwtService;
 	private final UserService userService;
@@ -59,6 +67,10 @@ public class LoginController {
 		this.authenticationManager = authenticationManager;
 
 	}
+
+	// ----------------------------------------------------------------------------------------
+	// Registration Endpoint
+	// ----------------------------------------------------------------------------------------
 
 	@PostMapping("/register")
 	@Operation(summary = "Inscription d'un nouvel utilisateur", description = "Crée un nouveau compte utilisateur et renvoie un token JWT")
@@ -103,7 +115,7 @@ public class LoginController {
 		// Generate token
 		String token = jwtService.generateToken(authentication);
 
-		// Use LinkedHashMap to maintain order
+		// Prepare ordered response
 		Map<String, Object> response = new LinkedHashMap<>();
 		response.put("message", "Registration successful");
 		response.put("token", token);
@@ -129,10 +141,16 @@ public class LoginController {
 	})
 	public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
 		try {
+			System.out.println("Received email: " + loginRequest.getEmail());
+			System.out.println("Received password: " + loginRequest.getPassword());
+
+			// Authenticate user
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(
-							loginRequest.getemail(),
+							loginRequest.getEmail(),
 							loginRequest.getPassword()));
+
+			// Generate JWT token
 			String token = jwtService.generateToken(authentication);
 
 			Map<String, Object> response = new LinkedHashMap<>();
@@ -145,6 +163,10 @@ public class LoginController {
 			throw new AuthenticationFailedException("Invalid email or password");
 		}
 	}
+
+	// ----------------------------------------------------------------------------------------
+	// User Information Endpoint
+	// ----------------------------------------------------------------------------------------
 
 	@Autowired
 	private UserRepository dBUserRepository;
@@ -164,13 +186,17 @@ public class LoginController {
 	})
 	public ResponseEntity<?> testMe() {
 
+		// Get current authentication context
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+		// Extract JWT token and get user email
 		JwtAuthenticationToken jwtAuth = (JwtAuthenticationToken) authentication;
 		String email = jwtAuth.getToken().getClaim("email");
 
+		// Retrieve user from database
 		DBUser user = dBUserRepository.findByEmail(email);
 
+		// Convert to DTO and return
 		UserDTO userDTO = new UserDTO(
 				user.getId(),
 				user.getUserMail(),

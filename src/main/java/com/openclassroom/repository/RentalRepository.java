@@ -10,4 +10,15 @@ import com.openclassroom.Entity.DBRental;
 
 @Repository
 public interface RentalRepository extends JpaRepository<DBRental, Integer> {
+    // ----------------------------------------------------------------------------------------
+    // Inherited JpaRepository Methods:
+    // ----------------------------------------------------------------------------------------
+    // - save(DBMessage entity) : Saves a message
+    // - findById(Integer id) : Finds a message by ID
+    // - findAll() : Retrieves all messages
+    // - delete(DBMessage entity) : Deletes a message
+    // - deleteById(Integer id) : Deletes a message by ID
+    // - existsById(Integer id) : Checks if a message exists
+    // - count() : Returns total number of messages
+    // ----------------------------------------------------------------------------------------
 }

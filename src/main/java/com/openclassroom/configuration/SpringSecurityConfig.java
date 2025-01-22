@@ -39,6 +39,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
+	// ----------------------------------------------------------------------------------------
+	// Dependencies and Properties
+	// ----------------------------------------------------------------------------------------
+
 	@Value("${jwt.secret}")
 	private String jwtKey;
 
@@ -50,13 +54,18 @@ public class SpringSecurityConfig {
 		return new MvcRequestMatcher.Builder(introspector);
 	}
 
+	// ----------------------------------------------------------------------------------------
+	// Security Filter Chain Configuration
+	// ----------------------------------------------------------------------------------------
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
 		return http
-				.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				.csrf(csrf -> csrf.disable()) // Disable CSRF protection
+				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+				// Configure URL-based security
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(
 								mvc.pattern("/api/auth/login"),
@@ -65,13 +74,13 @@ public class SpringSecurityConfig {
 								mvc.pattern("/swagger-ui.html"),
 								mvc.pattern("/swagger-resources/**"),
 								mvc.pattern("/v3/api-docs/**"))
-
-						.permitAll()
-						.anyRequest().authenticated())
+						.permitAll() // These endpoints are publicly accessible
+						.anyRequest().authenticated()) // All other endpoints require authentication
 
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.jwt(Customizer.withDefaults())
 						.authenticationEntryPoint((request, response, authException) -> {
+							// Custom error response for authentication failures
 							response.setContentType("application/json");
 							response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
@@ -85,6 +94,10 @@ public class SpringSecurityConfig {
 						}))
 				.build();
 	}
+
+	// ----------------------------------------------------------------------------------------
+	// CORS Configuration
+	// ----------------------------------------------------------------------------------------
 
 	@Bean
 
@@ -100,6 +113,10 @@ public class SpringSecurityConfig {
 		return source;
 	}
 
+	// ----------------------------------------------------------------------------------------
+	// JWT Configuration
+	// ----------------------------------------------------------------------------------------
+
 	@Bean
 	public JwtEncoder jwtEncoder() {
 		return new NimbusJwtEncoder(new ImmutableSecret<>(this.jwtKey.getBytes()));
@@ -110,6 +127,10 @@ public class SpringSecurityConfig {
 		SecretKeySpec secretKey = new SecretKeySpec(this.jwtKey.getBytes(), 0, this.jwtKey.getBytes().length, "RSA");
 		return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
 	}
+
+	// ----------------------------------------------------------------------------------------
+	// Authentication Configuration
+	// ----------------------------------------------------------------------------------------
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

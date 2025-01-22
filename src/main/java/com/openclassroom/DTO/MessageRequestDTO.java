@@ -1,15 +1,8 @@
 package com.openclassroom.DTO;
 
+import lombok.Data;
+
+@Data
 public class MessageRequestDTO {
     private String message;
-
-    // Getter
-    public String getMessage() {
-        return message;
-    }
-
-    // Setter
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

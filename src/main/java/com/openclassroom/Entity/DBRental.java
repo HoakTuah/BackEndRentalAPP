@@ -12,14 +12,12 @@ import jakarta.persistence.GenerationType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "rentals")
+@Data
 public class DBRental {
-
-    // ----------------------------------------------------------------------------------------
-    // Maps columns names and properties of my rentals tables of my database
-    // rentaluser
-    // ----------------------------------------------------------------------------------------
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,83 +48,4 @@ public class DBRental {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // ----------------------------------------------------------------------------------------
-    // Getters => Return the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getSurface() {
-        return surface;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public DBUser getOwner() {
-        return owner;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    // ----------------------------------------------------------------------------------------
-    // Setters => Set the value of the property
-    // ----------------------------------------------------------------------------------------
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurface(BigDecimal surface) {
-        this.surface = surface;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setOwner(DBUser owner) {
-        this.owner = owner;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

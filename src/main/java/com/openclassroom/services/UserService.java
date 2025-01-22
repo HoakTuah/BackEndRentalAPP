@@ -15,6 +15,10 @@ import com.openclassroom.repository.UserRepository;
 
 public class UserService {
 
+    // ----------------------------------------------------------------------------------------
+    // Dependencies
+    // ----------------------------------------------------------------------------------------
+
     @Autowired
     private UserRepository userRepository;
 
@@ -36,7 +40,7 @@ public class UserService {
         }
 
         // ----------------------------------------------------------------------------------------
-        // Create a new user
+        // User Creation
         // ----------------------------------------------------------------------------------------
 
         DBUser user = new DBUser();
