@@ -31,13 +31,13 @@ Before running the application, make sure you have the following installed:
 
 ## 2. Installing Java Development Kit (JDK)
 
-    - Download and install from [Oracle](https://www.oracle.com/java/technologies/downloads/#java21)
+    - Download and install from : https://www.oracle.com/java/technologies/downloads/#java21
     - Run the installer
     - now Install vscode extension for java (if you use vscode IDE)
 
 ## 3. Node.js Installation
 
-    - Download and install from [Node.js](https://nodejs.org/en/download/)
+    - Download and install from : https://nodejs.org/en/download/
     - Run the installer
 
 ## 4. Angular CLI version 14 or higher Installation
@@ -55,7 +55,7 @@ Before running the application, make sure you have the following installed:
 
 ### 6. MySQL Setup
 
-    - Download and install from [MySQL](https://dev.mysql.com/downloads/mysql/)
+    - Download and install from : https://dev.mysql.com/downloads/mysql/
     - Open a terminal and run:
         - mysql -u root -p
         - enter password
@@ -68,7 +68,7 @@ Before running the application, make sure you have the following installed:
 
 ### 7. Cloudinary Setup
 
-    - Create an account at [Cloudinary](https://cloudinary.com/)
+    - Create an account at : https://cloudinary.com/
     - From your dashboard, copy:
         - Cloud Name
         - API Key
@@ -110,7 +110,7 @@ Before running the application, make sure you have the following installed:
 ### 11. swagger documentation
 
     - Be sure to run the application
-    - Open your browser and go to: http://localhost:3001/swagger-ui/index.html
+    - Open your browser and go to : http://localhost:3001/swagger-ui/index.html
     - From swagger, you can test the API
     - You can also see the API documentation and the endpoints that will explain the request and response :
 
